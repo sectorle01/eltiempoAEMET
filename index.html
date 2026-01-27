@@ -17,10 +17,33 @@
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   />
 </head>
-  
-<body>
 
-<h1>Municipios Sector LE-01</h1>
+<body>
+  <header class="top-bar">
+    <div class="top-bar__group">
+      <span class="top-bar__title">El tiempo - Sector LE-01</span>
+    </div>
+
+    <div class="top-bar__group">
+      <label for="serviceSelect" class="top-bar__label">Servicio</label>
+      <select id="serviceSelect" class="top-bar__select">
+        <option value="aemet" selected>AEMET</option>
+        <option value="meteored">Meteored</option>
+        <option value="otro">Otro servicio</option>
+      </select>
+    </div>
+
+    <div class="top-bar__group top-bar__group--actions">
+      <button type="button" id="btnRadar" class="top-bar__button top-bar__button--primary">
+        Radar
+      </button>
+      <button type="button" id="btnPaneles" class="top-bar__button">
+        Paneles WZ
+      </button>
+    </div>
+  </header>
+
+
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -38,4 +61,6 @@ if ('serviceWorker' in navigator) {
 </body>
 
 </html>
+
+
 
