@@ -2,19 +2,95 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f5f5f7;
+  color: #111827;
 }
 
-h1 {
-  text-align: center;
-  margin: 0.5em 0;
+/* Barra superior */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
 }
 
-/* Mapa */
+.top-bar > * {
+  flex-shrink: 0;
+}
+
+.top-bar h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+/* Selector de servicio */
+#serviceSelect {
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 0.95rem;
+}
+
+/* Botones */
+button {
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.6rem;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* Contenedor del mapa */
 #map {
-  height: 90vh;
+  height: calc(100vh - 80px);
+  width: 100%;
+  border-radius: 1rem;
+  margin: 0.5rem auto;
+  max-width: 95%;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
 }
 
-/* Tooltips Leaflet */
+/* Tooltip Leaflet */
 .leaflet-tooltip {
-  font-size: 0.9rem;
+  background: rgba(17, 24, 39, 0.9);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .top-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #map {
+    height: calc(100vh - 140px);
+    max-width: 100%;
+    border-radius: 0;
+  }
 }
