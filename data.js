@@ -25,3 +25,4 @@ const MUNICIPIOS = {
 { "type": "Feature", "properties": { "codmun": "24057", "nombre": "San Miguel de las Dueñas" }, "geometry": { "type": "Point", "coordinates": [ -6.526193882674989, 42.587212809693632 ] } }
 ]
 }
+
