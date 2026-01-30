@@ -1,4 +1,4 @@
-const CACHE_NAME = 'leon-meteo-v1';
+const CACHE_NAME = 'leon-meteo-v2';
 
 const FILES_TO_CACHE = [
   './',
@@ -42,3 +42,4 @@ self.addEventListener('fetch', event => {
       .then(response => response || fetch(event.request))
   );
 });
+
