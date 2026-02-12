@@ -83,41 +83,59 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap"
 }).addTo(map);
 
-const PUNTO_STYLE_BASE = {
-  radius: 25,
-  color: "#444",
-  weight: 1,
-  fillColor: "#444",
-  fillOpacity: 0.4
+const PUNTO_STYLE_VISIBLE = {
+  radius: 4,         // punto pequeño
+  color: "#111",     // borde del punto
+  weight: 2,
+  fillOpacity: 0     // sin relleno, se ve como “punto”
 };
 
-const PUNTO_STYLE_HOVER = {
-  fillColor: "#f5d11b",
-  fillOpacity: 0.9
+const PUNTO_STYLE_VISIBLE_HOVER = {
+  radius: 4,
+  color: "#f5d11b",
+  weight: 3,
+  fillOpacity: 0
+};
+
+const PUNTO_STYLE_HITAREA = {
+  radius: 12,        // área cómoda para dedo
+  weight: 0,
+  fillOpacity: 0     // invisible
 };
 
 const capaMunicipios = L.geoJSON(MUNICIPIOS, {
-  // Para GeoJSON de tipo Point, Leaflet llama a esto
-  pointToLayer: (feature, latlng) => L.circleMarker(latlng, PUNTO_STYLE_BASE),
+  pointToLayer: (feature, latlng) => L.circleMarker(latlng, PUNTO_STYLE_VISIBLE),
 
   onEachFeature: (feature, layer) => {
     const { nombre, codmun } = feature.properties || {};
-
     if (nombre) layer.bindTooltip(nombre, { sticky: true });
 
-    layer.on("mouseover", () => layer.setStyle(PUNTO_STYLE_HOVER));
-    layer.on("mouseout", () => layer.setStyle(PUNTO_STYLE_BASE));
+    // Hit area invisible (añadida al mapa, pero no se devuelve como feature)
+    const hit = L.circleMarker(layer.getLatLng(), PUNTO_STYLE_HITAREA).addTo(map);
 
-    layer.on("click", () => {
+    const hoverOn = () => layer.setStyle(PUNTO_STYLE_VISIBLE_HOVER);
+    const hoverOff = () => layer.setStyle(PUNTO_STYLE_VISIBLE);
+
+    layer.on("mouseover", hoverOn);
+    layer.on("mouseout", hoverOff);
+
+    const abrir = () => {
       if (nombre && codmun) abrirPrediccion(nombre, codmun);
-    });
+    };
+
+    layer.on("click", abrir);
+    hit.on("click", abrir);
+
+    // Para que el hit no se quede “suelo” si quitas la capa, lo encadenamos:
+    layer.on("remove", () => map.removeLayer(hit));
   }
 }).addTo(map);
 
 // Encadre inicial (con fallback por si algo va raro)
 const bounds = capaMunicipios.getBounds();
-if (bounds.isValid()) {
-  map.fitBounds(bounds, { padding: [5, 5] });
+
+if (bounds && bounds.isValid && bounds.isValid()) {
+  map.fitBounds(bounds, { padding: [5, 5], maxZoom: 12 });
 } else {
-  map.setView([40.4168, -3.7038], 6);
+  map.setView([42.6, -5.6], 8); // mejor fallback para León que Madrid 🙂
 }
