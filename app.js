@@ -46,7 +46,7 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   btnPaneles?.addEventListener("click", () => {
-    openInNewTab("https://www.wetterzentrale.de/es/topkarten.php?model=gfs&lid=OP");
+    openInNewTab("https://www.wetterzentrale.de/es/topkarten.php?map=18&model=gfs&var=4&time=1&run=12&lid=OP&h=0&mv=0&tr=1");
   });
 });
 
@@ -139,3 +139,4 @@ if (bounds && bounds.isValid && bounds.isValid()) {
 } else {
   map.setView([42.6, -5.6], 8); // mejor fallback para León que Madrid 🙂
 }
+
