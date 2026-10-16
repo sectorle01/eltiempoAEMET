@@ -1,70 +1,108 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Sector LE-01</title>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b3b60">
+  <meta name="description" content="Cuadro de mando meteorológico del sector de conservación LE-01.">
+  <title>El tiempo · Sector LE-01</title>
 
   <link rel="icon" href="favicon.ico">
-  
   <link rel="manifest" href="manifest.json">
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
   <link rel="stylesheet" href="estilos.css">
-
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
 </head>
 
 <body>
+  <a class="skip-link" href="#panelDetalle">Saltar a la información del punto</a>
+
   <header class="top-bar">
-    <div class="top-bar__group">
-      <span class="top-bar__title">El tiempo - Sector LE-01</span>
+    <div class="brand">
+      <strong>Sector LE-01</strong>
+      <span>Cuadro meteorológico</span>
     </div>
 
-    <div class="top-bar__group">
-      <label for="serviceSelect" class="top-bar__label">Servicio</label>
-      <select id="serviceSelect" class="top-bar__select">
-        <option value="aemet" selected>AEMET</option>
-        <option value="meteored">Meteored</option>
-      </select>
-    </div>
-
-    <div class="top-bar__group top-bar__group--actions">
-      <button type="button" id="btnRadar" class="top-bar__button top-bar__button--primary">
-        Radar
-      </button>
-      <button type="button" id="btnPaneles" class="top-bar__button">
-        Paneles WZ
-      </button>
+    <div class="top-bar__tools" aria-label="Herramientas">
+      <button type="button" id="btnRadar">Radar</button>
+      <button type="button" id="btnPaneles">Modelos</button>
+      <button type="button" id="btnUbicacion" title="Centrar en mi ubicación">Mi ubicación</button>
+      <button type="button" id="btnContraste" aria-pressed="false">Alto contraste</button>
     </div>
   </header>
 
+  <div class="data-notice" id="dataNotice" role="status">
+    <span class="status-dot status-dot--neutral" aria-hidden="true"></span>
+    <span>Acceso a predicciones externas. Aún no hay datos meteorológicos integrados.</span>
+  </div>
 
-<div id="map"></div>
+  <main class="workspace">
+    <section class="map-shell" aria-label="Mapa del sector">
+      <div id="map"></div>
+      <div class="map-legend" aria-label="Leyenda">
+        <span><i class="legend-point"></i> Localidad</span>
+        <span><i class="legend-line"></i> Tramo verificado</span>
+      </div>
+    </section>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="data.js"></script>
-<script src="app.js"></script>
+    <aside class="side-panel" id="panelDetalle" aria-label="Información operativa" tabindex="-1">
+      <section class="search-block">
+        <label class="field" for="searchInput">
+          <span>Buscar localidad, carretera o PK</span>
+          <input id="searchInput" type="search" autocomplete="off" placeholder="Ej.: Astorga">
+        </label>
+        <div id="searchResults" class="search-results" aria-live="polite"></div>
+      </section>
 
-<script>
-if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-  navigator.serviceWorker.register('./service-worker.js')
-    .then(() => console.log('Service Worker registrado'))
-    .catch(err => console.error('SW error', err));
-} else {
-  console.log('SW desactivado en file://');
-}
-</script>
+      <section id="emptyState" class="empty-state">
+        <h1>Selecciona un punto o tramo</h1>
+        <p>Consulta su ficha sin abandonar el mapa y abre después la predicción de la fuente elegida.</p>
+      </section>
 
+      <article id="featureCard" class="feature-card" hidden>
+        <div class="feature-card__heading">
+          <div>
+            <p id="featureType" class="eyebrow"></p>
+            <h1 id="featureName"></h1>
+          </div>
+          <button type="button" id="btnFavorito" class="button--icon" aria-pressed="false" title="Guardar como favorito">☆</button>
+        </div>
 
+        <dl id="featureFacts" class="facts"></dl>
 
+        <div class="operational-status operational-status--pending">
+          <strong>Estado operativo: sin evaluar</strong>
+          <span>Los umbrales se incorporarán cuando sean validados por los responsables de conservación.</span>
+        </div>
+
+        <section class="forecast-placeholder" aria-labelledby="forecastTitle">
+          <h2 id="forecastTitle">Previsión</h2>
+          <p>No disponible todavía dentro de la aplicación. La integración automática de AEMET corresponde a la fase 3.</p>
+        </section>
+
+        <div class="source-actions">
+          <button type="button" id="btnAemet" class="button--primary">Abrir AEMET</button>
+          <button type="button" id="btnMeteored">Abrir Meteored</button>
+        </div>
+      </article>
+
+      <section class="favorites-block" aria-labelledby="favoritesTitle">
+        <h2 id="favoritesTitle">Favoritos</h2>
+        <div id="favoritesList" class="favorites-list"><p class="muted">No hay favoritos guardados.</p></div>
+      </section>
+    </aside>
+  </main>
+
+  <div id="updateBanner" class="update-banner" hidden role="status">
+    <span>Hay una versión nueva disponible.</span>
+    <button type="button" id="btnUpdate">Actualizar</button>
+  </div>
+
+  <noscript>Esta aplicación necesita JavaScript para mostrar el mapa.</noscript>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
 </body>
-
 </html>
-
-
-
-

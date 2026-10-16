@@ -1,0 +1,12 @@
+{
+  "name": "sector-le01-tiempo",
+  "version": "3.0.0-beta.1",
+  "private": true,
+  "description": "Cuadro meteorológico estático del sector LE-01",
+  "scripts": {
+    "test": "node scripts/quality.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
