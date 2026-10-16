@@ -51,8 +51,8 @@ const index = await text("index.html");
 for (const resource of ["config.js", "app.js", "estilos.css", "manifest.json"]) {
   assert(index.includes(resource), `index.html: no referencia ${resource}`);
 }
-assert(index.includes("integrity=\\"sha256-"), "index.html: Leaflet debe llevar integridad SRI");
-assert(index.includes("crossorigin=\\"anonymous\\""), "index.html: Leaflet debe declarar crossorigin");
+assert(index.includes("integrity=\"sha256-"), "index.html: Leaflet debe llevar integridad SRI");
+assert(index.includes("crossorigin=\"anonymous\""), "index.html: Leaflet debe declarar crossorigin");
 
 const worker = await text("service-worker.js");
 for (const resource of ["config.js", "app.js", "estilos.css", "puntos.geojson", "tramos.geojson"]) {
@@ -60,19 +60,19 @@ for (const resource of ["config.js", "app.js", "estilos.css", "puntos.geojson", 
 }
 
 const secretPatterns = [
-  /AEMET(?:_OPEN_DATA)?_?API_?KEY\\s*[:=]\\s*["'][^"']+/i,
+  /AEMET(?:_OPEN_DATA)?_?API_?KEY\s*[:=]\s*["'][^"']+/i,
   /(?:github_pat_|ghp_)[A-Za-z0-9_]{20,}/,
   /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/
 ];
 const textExtensions = new Set([".html", ".css", ".js", ".mjs", ".json", ".geojson", ".md", ".yml", ".yaml"]);
 for (const file of await collectFiles()) {
   if (!textExtensions.has(extname(file))) continue;
-  const content = await text(file.replace(/^\\.\\//, ""));
+  const content = await text(file.replace(/^\.\//, ""));
   for (const pattern of secretPatterns) assert(!pattern.test(content), `${file}: posible secreto detectado`);
 }
 
 if (errors.length) {
-  console.error(`Fallaron ${errors.length} comprobaciones:\\n- ${errors.join("\\n- ")}`);
+  console.error(`Fallaron ${errors.length} comprobaciones:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
 
